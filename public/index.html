@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ViolinMaster</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <svg class="svg-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-brand" viewBox="0 0 24 24">
+        <circle class="brass" cx="12" cy="12" r="9.4" />
+        <path d="M6.5 19.2c.7-6.7 3.3-9 5.3-10.7 1.8-1.5 1.8-3.6-.3-3.7-2.4-.1-3.6 2.4-2.1 3.9 1.1 1.1 3 .9 4.5-.3" />
+        <path d="M12 18.2h6.2" />
+        <circle class="brass" cx="18" cy="15.1" r="1.2" />
+      </symbol>
+      <symbol id="icon-workbench" viewBox="0 0 24 24">
+        <path d="M4.2 5.5h15.6v12.9H4.2z" />
+        <path d="M4.2 8.5h15.6" />
+        <path d="M7 11.2h5.2" />
+        <path d="M7 14h4.2" />
+        <path class="brass" d="M6.4 16.3c.5-.9.8-.9 1.2 0s.8.9 1.2 0 .8-.9 1.2 0 .8.9 1.2 0 .8-.9 1.2 0 .8.9 1.2 0 .8-.9 1.2 0 .8.9 1.2 0" />
+        <path class="brass" d="M14.2 14.2v-4.1l3.2-.9v4.2" />
+        <circle class="brass" cx="14.2" cy="14.3" r="1.2" />
+        <circle class="brass" cx="17.4" cy="13.4" r="1.2" />
+      </symbol>
+      <symbol id="icon-library" viewBox="0 0 24 24">
+        <path d="M4.2 19.2h15.6" />
+        <path d="M5.8 6.1h3v12.4h-3z" />
+        <path d="M10.3 4.9h3v13.6h-3z" />
+        <path d="m15.2 7.1 3.1-.4 1.5 11.4-3.1.4z" />
+        <path class="brass" d="M12 18.5V9.3" />
+        <path class="brass" d="M10.8 12.8c.6-.6 1.8-.6 2.4 0" />
+        <circle class="brass" cx="12" cy="7" r="1.2" />
+      </symbol>
+      <symbol id="icon-stats" viewBox="0 0 24 24">
+        <path d="M4.2 19h15.6" />
+        <path d="M5.4 16v-3.2" />
+        <path d="M8.8 16v-6" />
+        <path d="M12.2 16v-4.4" />
+        <path d="M15.6 16V8.5" />
+        <path d="M19 16V6.2" />
+        <path class="brass" d="M5.4 11.5 9 8.6l3.2 2.3 3.4-3.8 3.4-3.3" />
+        <circle class="brass" cx="5.4" cy="11.5" r="1.1" />
+        <circle class="brass" cx="12.2" cy="10.9" r="1.1" />
+        <circle class="brass" cx="19" cy="3.8" r="1.1" />
+      </symbol>
+      <symbol id="icon-coach" viewBox="0 0 24 24">
+        <path d="M4.2 18.2a7.8 7.8 0 0 1 7.8-12.9" />
+        <circle cx="8.2" cy="10.4" r="3" />
+        <path class="brass" d="M12.2 18V7.1" />
+        <path class="brass" d="M10.9 9.2c.6-.6 2-.6 2.6 0" />
+        <circle class="brass" cx="12.2" cy="5.7" r="1" />
+        <path d="M14.1 6.2h4.8v5.2h-3.3l-2.2 2v-2h-.8" />
+      </symbol>
+      <symbol id="icon-settings" viewBox="0 0 24 24">
+        <path d="M12 4.1 14 5l1.9-.6 1.7 1.7-.6 1.9.9 2 .9 2-.9 2 .6 1.9-1.7 1.7-1.9-.6-2 .9-2-.9-1.9.6-1.7-1.7.6-1.9-.9-2-.9-2 .9-2-.6-1.9 1.7-1.7 1.9.6z" />
+        <circle class="brass" cx="12" cy="12" r="3.7" />
+      </symbol>
+      <symbol id="icon-back" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.8" />
+        <path class="brass" d="M14.8 7.5 9.2 12l5.6 4.5" />
+        <path class="brass" d="M9.5 12h8" />
+      </symbol>
+      <symbol id="icon-metronome" viewBox="0 0 24 24">
+        <path d="M7.2 19.2h9.6L15.2 4.8H8.8z" />
+        <path d="M7.8 16.5h8.4" />
+        <path d="M12 7.1v7.1" />
+        <path class="brass" d="m12 14.2 4-6.4" />
+        <path d="M10.2 8h3.6" />
+        <path d="M10.5 10.8h3" />
+      </symbol>
+      <symbol id="icon-loop" viewBox="0 0 24 24">
+        <path d="M5.2 9.7a7.2 7.2 0 0 1 11.9-2.8" />
+        <path d="M18.8 14.3a7.2 7.2 0 0 1-11.9 2.8" />
+        <path class="brass" d="m17.1 4.8.4 3.4-3.4.3" />
+        <path class="brass" d="m6.9 19.2-.4-3.4 3.4-.3" />
+      </symbol>
+      <symbol id="icon-range" viewBox="0 0 24 24">
+        <path d="M7.8 6.8h8.4" />
+        <path d="M7.8 17.2h8.4" />
+        <path d="M8.2 6.8v10.4" />
+        <path d="M15.8 6.8v10.4" />
+        <path d="M6 9.2h12" stroke-dasharray="1.4 2.4" />
+        <path d="M6 14.8h12" stroke-dasharray="1.4 2.4" />
+        <rect class="brass" x="4.3" y="5.4" width="3" height="3" rx=".4" />
+        <rect class="brass" x="4.3" y="15.6" width="3" height="3" rx=".4" />
+      </symbol>
+      <symbol id="icon-comment" viewBox="0 0 24 24">
+        <path d="M5.5 6.7h13v8.9h-7.2l-4.1 3v-3H5.5z" />
+        <path class="brass" d="M8.6 10.1h6.8" />
+        <path class="brass" d="M8.6 12.6h5.2" />
+      </symbol>
+      <symbol id="icon-upload" viewBox="0 0 24 24">
+        <path d="M6.4 3.8h8.2l3 3v13.4H6.4z" />
+        <path d="M14.6 3.8v3h3" />
+        <path class="brass" d="M12 16V9.1" />
+        <path class="brass" d="m9.3 11.8 2.7-2.7 2.7 2.7" />
+        <path d="M8.8 17.8h6.4" />
+      </symbol>
+    </svg>
+    <main class="page-shell">
+      <section class="intro-band" aria-label="产品概览">
+        <nav class="intro-nav">
+          <a class="brand-wordmark" href="#" aria-label="ViolinMaster home">
+            <span class="brand-glyph">V</span>
+            <span>VIOLINMASTER</span>
+          </a>
+          <div class="nav-actions">
+            <button type="button">Studio</button>
+            <button type="button">Library</button>
+            <button type="button" class="nav-primary">Start Practice</button>
+          </div>
+        </nav>
+
+        <div class="intro-copy">
+          <h1>ViolinMaster</h1>
+          <p>
+            录音、对谱、定位问题，再把音准与节奏偏差翻译成练琴语言。
+          </p>
+        </div>
+
+        <div class="feature-tabs" aria-label="核心工作流">
+          <button class="tab-item" type="button">
+            <span>Full take</span>
+          </button>
+          <button class="tab-item active" type="button">
+            <span>Target drill</span>
+          </button>
+          <button class="tab-item" type="button">
+            <span>Pitch map</span>
+          </button>
+          <button class="tab-item" type="button">
+            <span>Rhythm</span>
+          </button>
+          <button class="tab-item" type="button">
+            <span>Error stats</span>
+          </button>
+          <button class="tab-item" type="button">
+            <span>AI coach</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="workbench-stage" aria-label="ViolinMaster 练习工作台">
+        <div class="varnish-ribbon ribbon-one"></div>
+        <div class="varnish-ribbon ribbon-two"></div>
+        <div class="app-frame">
+          <aside class="dock" aria-label="主导航">
+            <div class="dock-logo" aria-label="ViolinMaster">
+              <svg><use href="#icon-brand"></use></svg>
+            </div>
+            <button class="dock-button active" title="练习工作台" aria-label="练习工作台">
+              <svg><use href="#icon-workbench"></use></svg>
+            </button>
+            <button class="dock-button" title="曲目库" aria-label="曲目库">
+              <svg><use href="#icon-library"></use></svg>
+            </button>
+            <button class="dock-button" title="错误统计" aria-label="错误统计">
+              <svg><use href="#icon-stats"></use></svg>
+            </button>
+            <button class="dock-button" title="教练" aria-label="教练">
+              <svg><use href="#icon-coach"></use></svg>
+            </button>
+            <div class="dock-spacer"></div>
+            <button class="dock-button" title="设置" aria-label="设置">
+              <svg><use href="#icon-settings"></use></svg>
+            </button>
+          </aside>
+
+          <section class="studio-surface">
+            <header class="topbar">
+              <div class="topbar-left">
+                <button class="round-button" type="button" aria-label="返回">
+                  <svg><use href="#icon-back"></use></svg>
+                </button>
+                <label class="toolbar-pill">
+                  <span>曲目</span>
+                  <select id="pieceSelect"></select>
+                </label>
+                <label class="toolbar-pill compact">
+                  <span>模式</span>
+                  <select id="modeSelect">
+                    <option value="full">Full Take</option>
+                    <option value="drill">Target Drill</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="topbar-right">
+                <button id="demoButton" class="tool-circle" type="button">Demo</button>
+                <button id="recordButton" class="primary-button" type="button">Record</button>
+                <button id="analyzeButton" class="dark-button" type="button">Analyze</button>
+                <label class="upload-circle" title="上传音频">
+                  <svg><use href="#icon-upload"></use></svg>
+                  <input id="fileInput" type="file" accept="audio/*" />
+                </label>
+              </div>
+            </header>
+
+            <div class="workspace-grid">
+              <section class="score-column">
+                <div class="score-document">
+                  <div class="score-head">
+                    <div>
+                      <p class="eyebrow">Current Study</p>
+                      <h2 id="pieceTitle">Minuet in G</h2>
+                    </div>
+                    <div class="score-meta">
+                      <span id="pieceComposer">J. S. Bach</span>
+                      <span id="pieceTempo">q = 88</span>
+                    </div>
+                  </div>
+
+                  <div class="score-paper" aria-label="乐谱分析画布">
+                    <div id="scoreLines" class="score-lines"></div>
+                    <div class="measure-strip" id="measureStrip"></div>
+                  </div>
+
+                  <div class="document-footer">
+                    <div>
+                      <p class="eyebrow">Audio input</p>
+                      <h3 id="recordingState">准备录音或上传</h3>
+                    </div>
+                    <audio id="audioPlayer" controls></audio>
+                  </div>
+                </div>
+
+                <div class="timeline-panel">
+                  <div class="panel-title">
+                    <div>
+                      <p class="eyebrow">Performance timeline</p>
+                      <h2>音高轮廓与问题标记</h2>
+                    </div>
+                    <span id="frameCount" class="status-pill muted">0 frames</span>
+                  </div>
+                  <canvas id="pitchCanvas" width="1200" height="260"></canvas>
+                </div>
+              </section>
+
+              <aside class="coach-panel">
+                <div class="panel-title">
+                  <div>
+                    <p class="eyebrow">Coach</p>
+                    <h2>练习诊断</h2>
+                  </div>
+                  <span id="analysisStatus" class="status-pill muted">Idle</span>
+                </div>
+
+                <div class="metric-grid">
+                  <article>
+                    <span>Pitch</span>
+                    <strong id="pitchScore">--</strong>
+                  </article>
+                  <article>
+                    <span>Rhythm</span>
+                    <strong id="rhythmScore">--</strong>
+                  </article>
+                  <article>
+                    <span>Stability</span>
+                    <strong id="stabilityScore">--</strong>
+                  </article>
+                </div>
+
+                <section class="coach-card featured">
+                  <p class="eyebrow">Top Priority</p>
+                  <p id="topPriority">完成一次录音后，我会把问题翻译成练琴语言。</p>
+                </section>
+
+                <section class="drill-card">
+                  <div>
+                    <p class="eyebrow">Target Drill</p>
+                    <h3>指定小节特训</h3>
+                  </div>
+                  <div class="range-controls">
+                    <label>
+                      起始
+                      <input id="measureStart" type="number" min="1" max="16" value="1" />
+                    </label>
+                    <label>
+                      结束
+                      <input id="measureEnd" type="number" min="1" max="16" value="4" />
+                    </label>
+                  </div>
+                  <button id="drillButton" class="outline-button" type="button">
+                    Analyze Selected Bars
+                  </button>
+                  <p id="drillHint" class="subtle-copy">
+                    AI 会把选定范围作为下一段特训目标。
+                  </p>
+                </section>
+
+                <section class="coach-card">
+                  <p class="eyebrow">Next Drill</p>
+                  <p id="nextDrill">建议先从 2-4 小节的短片段开始。</p>
+                </section>
+
+                <section class="coach-card">
+                  <div class="card-title-row">
+                    <p class="eyebrow">Recurring Errors</p>
+                    <button id="clearHistoryButton" class="text-button" type="button">Clear</button>
+                  </div>
+                  <ul id="errorList" class="error-list">
+                    <li>暂无历史统计</li>
+                  </ul>
+                </section>
+              </aside>
+            </div>
+          </section>
+
+          <nav class="floating-tools" aria-label="快捷工具">
+            <button title="Metronome" aria-label="Metronome"><svg><use href="#icon-metronome"></use></svg></button>
+            <button title="Loop" aria-label="Loop"><svg><use href="#icon-loop"></use></svg></button>
+            <button title="Measure Range" aria-label="Measure Range"><svg><use href="#icon-range"></use></svg></button>
+            <button title="Comments" aria-label="Comments"><svg><use href="#icon-comment"></use></svg></button>
+            <button title="Statistics" aria-label="Statistics"><svg><use href="#icon-stats"></use></svg></button>
+            <button title="Coach" aria-label="Coach"><svg><use href="#icon-coach"></use></svg></button>
+          </nav>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>
