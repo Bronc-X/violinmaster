@@ -102,14 +102,14 @@
     <main class="page-shell">
       <section class="intro-band" aria-label="产品概览">
         <nav class="intro-nav">
-          <a class="brand-wordmark" href="#" aria-label="ViolinMaster home">
+          <a class="brand-wordmark" href="#studio" data-action="studio" aria-label="ViolinMaster home">
             <span class="brand-glyph">V</span>
             <span>VIOLINMASTER</span>
           </a>
           <div class="nav-actions">
-            <button type="button">Studio</button>
-            <button type="button">Library</button>
-            <button type="button" class="nav-primary">Start Practice</button>
+            <button type="button" data-action="studio">Studio</button>
+            <button type="button" data-action="library">Library</button>
+            <button type="button" class="nav-primary" data-action="start-practice">Start Practice</button>
           </div>
         </nav>
 
@@ -121,22 +121,22 @@
         </div>
 
         <div class="feature-tabs" aria-label="核心工作流">
-          <button class="tab-item" type="button">
+          <button class="tab-item" type="button" data-view="full">
             <span>Full take</span>
           </button>
-          <button class="tab-item active" type="button">
+          <button class="tab-item active" type="button" data-view="drill">
             <span>Target drill</span>
           </button>
-          <button class="tab-item" type="button">
+          <button class="tab-item" type="button" data-view="pitch">
             <span>Pitch map</span>
           </button>
-          <button class="tab-item" type="button">
+          <button class="tab-item" type="button" data-view="rhythm">
             <span>Rhythm</span>
           </button>
-          <button class="tab-item" type="button">
+          <button class="tab-item" type="button" data-view="stats">
             <span>Error stats</span>
           </button>
-          <button class="tab-item" type="button">
+          <button class="tab-item" type="button" data-view="coach">
             <span>AI coach</span>
           </button>
         </div>
@@ -150,20 +150,20 @@
             <div class="dock-logo" aria-label="ViolinMaster">
               <svg><use href="#icon-brand"></use></svg>
             </div>
-            <button class="dock-button active" title="练习工作台" aria-label="练习工作台">
+            <button class="dock-button active" title="练习工作台" aria-label="练习工作台" data-action="workbench">
               <svg><use href="#icon-workbench"></use></svg>
             </button>
-            <button class="dock-button" title="曲目库" aria-label="曲目库">
+            <button class="dock-button" title="曲目库" aria-label="曲目库" data-action="library">
               <svg><use href="#icon-library"></use></svg>
             </button>
-            <button class="dock-button" title="错误统计" aria-label="错误统计">
+            <button class="dock-button" title="错误统计" aria-label="错误统计" data-action="stats">
               <svg><use href="#icon-stats"></use></svg>
             </button>
-            <button class="dock-button" title="教练" aria-label="教练">
+            <button class="dock-button" title="教练" aria-label="教练" data-action="coach">
               <svg><use href="#icon-coach"></use></svg>
             </button>
             <div class="dock-spacer"></div>
-            <button class="dock-button" title="设置" aria-label="设置">
+            <button class="dock-button" title="设置" aria-label="设置" data-action="settings">
               <svg><use href="#icon-settings"></use></svg>
             </button>
           </aside>
@@ -171,7 +171,7 @@
           <section class="studio-surface">
             <header class="topbar">
               <div class="topbar-left">
-                <button class="round-button" type="button" aria-label="返回">
+                <button class="round-button" type="button" aria-label="返回" data-action="back-top">
                   <svg><use href="#icon-back"></use></svg>
                 </button>
                 <label class="toolbar-pill">
@@ -209,6 +209,7 @@
                     <div class="score-meta">
                       <span id="pieceComposer">J. S. Bach</span>
                       <span id="pieceTempo">q = 88</span>
+                      <span id="pieceLevel">beginner / intermediate</span>
                     </div>
                   </div>
 
@@ -309,12 +310,12 @@
           </section>
 
           <nav class="floating-tools" aria-label="快捷工具">
-            <button title="Metronome" aria-label="Metronome"><svg><use href="#icon-metronome"></use></svg></button>
-            <button title="Loop" aria-label="Loop"><svg><use href="#icon-loop"></use></svg></button>
-            <button title="Measure Range" aria-label="Measure Range"><svg><use href="#icon-range"></use></svg></button>
-            <button title="Comments" aria-label="Comments"><svg><use href="#icon-comment"></use></svg></button>
-            <button title="Statistics" aria-label="Statistics"><svg><use href="#icon-stats"></use></svg></button>
-            <button title="Coach" aria-label="Coach"><svg><use href="#icon-coach"></use></svg></button>
+            <button title="Metronome" aria-label="Metronome" data-action="metronome"><svg><use href="#icon-metronome"></use></svg></button>
+            <button title="Loop" aria-label="Loop" data-action="loop"><svg><use href="#icon-loop"></use></svg></button>
+            <button title="Measure Range" aria-label="Measure Range" data-action="range"><svg><use href="#icon-range"></use></svg></button>
+            <button title="Comments" aria-label="Comments" data-action="comments"><svg><use href="#icon-comment"></use></svg></button>
+            <button title="Statistics" aria-label="Statistics" data-action="stats"><svg><use href="#icon-stats"></use></svg></button>
+            <button title="Coach" aria-label="Coach" data-action="coach"><svg><use href="#icon-coach"></use></svg></button>
           </nav>
         </div>
       </section>

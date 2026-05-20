@@ -614,6 +614,13 @@ select {
   font-weight: 850;
 }
 
+.measure-strip button:hover,
+.measure-strip button.active {
+  color: var(--paper);
+  border-color: rgba(24, 23, 21, 0.2);
+  background: linear-gradient(180deg, #9c5b23, #5d3217);
+}
+
 .document-footer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
@@ -690,6 +697,18 @@ audio {
   color: var(--paper);
   border: 1px solid rgba(226, 177, 89, 0.28);
   background: rgba(226, 177, 89, 0.14);
+}
+
+.status-pill.active,
+.coach-panel .status-pill.active {
+  color: #181715;
+  background: linear-gradient(180deg, #e2b159, #b9782f);
+}
+
+.status-pill.error,
+.coach-panel .status-pill.error {
+  color: var(--paper);
+  background: #9a3f2f;
 }
 
 .metric-grid {
@@ -839,6 +858,11 @@ input[type="number"] {
   color: var(--paper);
   background: rgba(255, 255, 255, 0.09);
   transform: translateY(-1px);
+}
+
+.floating-tools button.active {
+  color: #f8edcf;
+  background: rgba(226, 177, 89, 0.16);
 }
 
 .floating-tools svg {
