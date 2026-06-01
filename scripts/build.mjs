@@ -7,6 +7,8 @@ const requiredFiles = [
   "public/styles.css",
   "public/app.mjs",
   "src/lib/analysis.mjs",
+  "src/lib/musicxml.mjs",
+  "src/lib/practice-session.mjs",
   "src/lib/repertoire.mjs",
   "src/lib/wav.mjs",
 ];

@@ -5,6 +5,14 @@ const HOP_SIZE = 1024;
 const MIN_FREQUENCY = 130;
 const MAX_FREQUENCY = 1400;
 const MIN_RMS = 0.015;
+const DEFAULT_GATE_CONFIG = {
+  responseWindowMeasures: 2,
+  minPitchScore: 86,
+  minRhythmScore: 72,
+  minConfidence: 0.45,
+  pitchToleranceCents: 28,
+  timingToleranceMs: 120,
+};
 
 export function frequencyToMidi(frequency) {
   return Math.round(69 + 12 * Math.log2(frequency / A4_FREQUENCY));
@@ -27,6 +35,7 @@ export function analyzePerformance({ samples, sampleRate, reference, range }) {
       pitchFrames,
       summary: emptySummary(reference),
       segments: [],
+      practiceGate: buildAudioQualityGate({ reference, range }),
       coach: {
         topPriorities: ["这次录音的有效音高太少，先重新录一遍更稳。"],
         nextDrill: "选择 2-4 小节，靠近麦克风，用中等音量重新录制。",
@@ -36,50 +45,150 @@ export function analyzePerformance({ samples, sampleRate, reference, range }) {
   }
 
   const notes = filterNotes(reference.notes, range);
+  const durationSeconds = samples.length / sampleRate;
   const averageConfidence =
     pitchFrames.reduce((sum, frame) => sum + frame.confidence, 0) / pitchFrames.length;
-  const pitchProfile = comparePitchToNotes(pitchFrames, notes, samples.length / sampleRate);
+  const noteWindows = createNoteWindows(notes, durationSeconds);
+  const pitchProfile = comparePitchFramesToWindows(pitchFrames, noteWindows);
   const pitchOffsetCents = pitchProfile.averageOffsetCents;
   const pitchScore = pitchProfile.score;
   const rhythmScore = estimateRhythmScore(samples, sampleRate, reference.tempo);
-  const issueTypes = classifyIssues(pitchOffsetCents, pitchScore, rhythmScore);
+  const issueTypes = classifyIssues(pitchOffsetCents, pitchScore, rhythmScore, pitchProfile);
   const measureStart = notes[0]?.measure ?? 1;
   const measureEnd = notes.at(-1)?.measure ?? measureStart;
-  const techniqueTags = techniqueTagsForRange(reference.techniqueMap, measureStart, measureEnd);
-  const learnerMessage = buildLearnerMessage(issueTypes, techniqueTags);
-  const practiceSuggestion = buildPracticeSuggestion(issueTypes, techniqueTags, measureStart, measureEnd);
-  const severity = pitchScore < 70 || rhythmScore < 70 ? "high" : pitchScore < 86 ? "medium" : "low";
-
-  const segment = {
+  const overallSegment = buildDiagnosisSegment({
     measureStart,
     measureEnd,
     issueTypes,
-    severity,
-    confidence: round2(averageConfidence),
-    raw: {
-      pitchOffsetCents: Math.round(pitchOffsetCents),
-    },
-    learnerMessage,
-    practiceSuggestion,
+    pitchProfile,
+    pitchScore,
+    rhythmScore,
+    confidence: averageConfidence,
+    reference,
+  });
+  const measureSegments = buildMeasureSegments({
+    noteWindows,
+    pitchFrames,
+    rhythmScore,
+    reference,
+  });
+  const segments = prioritizeSegments(measureSegments.length ? measureSegments : [overallSegment]);
+  const summary = {
+    pieceTitle: reference.title,
+    pitchScore: Math.round(pitchScore),
+    rhythmScore: Math.round(rhythmScore),
+    stabilityScore: Math.round((pitchScore + rhythmScore + averageConfidence * 100) / 3),
+    takeDurationSeconds: round2(durationSeconds),
+    primaryIssue: segments[0]?.issueTypes[0] ?? issueTypes[0],
   };
+  const practiceGate = evaluatePracticeGate({ segment: segments[0], summary, reference, range });
 
   return {
     status: "complete",
     pitchFrames,
-    summary: {
-      pieceTitle: reference.title,
-      pitchScore: Math.round(pitchScore),
-      rhythmScore: Math.round(rhythmScore),
-      stabilityScore: Math.round((pitchScore + rhythmScore + averageConfidence * 100) / 3),
-      takeDurationSeconds: round2(samples.length / sampleRate),
-      primaryIssue: issueTypes[0],
-    },
-    segments: [segment],
-    coach: buildCoach([segment], {
+    summary,
+    segments,
+    practiceGate,
+    coach: buildCoach(segments, {
       pitchScore,
       rhythmScore,
       measureStart,
       measureEnd,
+    }),
+  };
+}
+
+export function evaluatePracticeGate({ segment, summary = {}, reference = {}, range, config }) {
+  if (!segment) {
+    return buildAudioQualityGate({ reference, range, config });
+  }
+  const gateConfig = resolveGateConfig(config);
+  const focusRange = buildGateRange({ segment, reference, range, gateConfig });
+  const segmentIssueTypes = gateIssueTypesFor(segment.issueTypes);
+  const confidence = segment.confidence ?? 0;
+  const confidenceTooLow = confidence < gateConfig.minConfidence;
+  const pitchTooLow = (summary.pitchScore ?? 0) < gateConfig.minPitchScore;
+  const rhythmTooLow = (summary.rhythmScore ?? 0) < gateConfig.minRhythmScore;
+  const segmentStable = segment.issueTypes.includes("stable") && segmentIssueTypes.length === 0;
+  const mustRetry = confidenceTooLow || pitchTooLow || rhythmTooLow || !segmentStable;
+  const action = confidenceTooLow ? "retry-audio" : mustRetry ? "retry" : "continue";
+  const issueTypes =
+    action === "continue"
+      ? []
+      : gateIssueTypesWithThresholds(segmentIssueTypes, {
+          confidenceTooLow,
+          pitchTooLow,
+          rhythmTooLow,
+        });
+  const learnerMessage =
+    action === "continue"
+      ? "可以，这次重练已经稳定，可以进入下一乐句。"
+      : segment.learnerMessage;
+  const retryInstruction =
+    action === "continue"
+      ? "进入下一小节或下一乐句，继续保持当前音准和拍点。"
+      : focusRetryInstruction(segment.practiceSuggestion, focusRange);
+
+  return {
+    pieceId: reference.id,
+    pieceTitle: reference.title,
+    action,
+    isBlocking: action !== "continue",
+    allowedToContinue: action === "continue",
+    range: focusRange,
+    issueTypes,
+    severity: segment.severity,
+    confidence: round2(confidence),
+    responseWindow: buildResponseWindow(focusRange, gateConfig),
+    learnerMessage,
+    retryInstruction,
+    passThreshold: buildPassThreshold(gateConfig),
+    parentSummary: buildParentSummary(action, issueTypes, focusRange),
+  };
+}
+
+export function summarizePracticeSession({ gates = [], pieceTitle } = {}) {
+  const validGates = gates.filter(Boolean);
+  if (!validGates.length) {
+    return {
+      status: "empty",
+      attempts: 0,
+      retryCount: 0,
+      completedCount: 0,
+      repeatedProblemRanges: [],
+      improvedRanges: [],
+      currentGate: null,
+      parentMessage: "还没有可总结的练习记录。",
+      teacherMessage: "暂无本次课后练习数据。",
+    };
+  }
+
+  const currentGate = validGates.at(-1);
+  const retryGates = validGates.filter((gate) => gate.isBlocking);
+  const completedGates = validGates.filter((gate) => gate.allowedToContinue);
+  const repeatedProblemRanges = repeatedRanges(retryGates);
+  const improvedRanges = rangesImprovedAfterRetry(validGates);
+  const status = currentGate.allowedToContinue ? "ready-to-continue" : "needs-retry";
+
+  return {
+    status,
+    attempts: validGates.length,
+    retryCount: retryGates.length,
+    completedCount: completedGates.length,
+    repeatedProblemRanges,
+    improvedRanges,
+    currentGate,
+    parentMessage: buildSessionParentMessage({
+      status,
+      pieceTitle: pieceTitle ?? currentGate.pieceTitle,
+      retryCount: retryGates.length,
+      improvedRanges,
+      currentGate,
+    }),
+    teacherMessage: buildSessionTeacherMessage({
+      repeatedProblemRanges,
+      improvedRanges,
+      currentGate,
     }),
   };
 }
@@ -105,35 +214,127 @@ function extractPitchFrames(samples, sampleRate) {
 }
 
 function comparePitchToNotes(pitchFrames, notes, durationSeconds) {
-  if (!notes.length || !pitchFrames.length) {
-    return { averageOffsetCents: 0, score: 0 };
-  }
+  return comparePitchFramesToWindows(pitchFrames, createNoteWindows(notes, durationSeconds));
+}
 
+function createNoteWindows(notes, durationSeconds) {
+  if (!notes.length) return [];
   const totalBeats = notes.reduce((sum, note) => sum + note.durationBeats, 0);
   let elapsedBeat = 0;
-  const noteWindows = notes.map((note) => {
+  return notes.map((note) => {
     const start = (elapsedBeat / totalBeats) * durationSeconds;
     elapsedBeat += note.durationBeats;
     const end = (elapsedBeat / totalBeats) * durationSeconds;
     return { ...note, start, end };
   });
+}
+
+function comparePitchFramesToWindows(pitchFrames, noteWindows) {
+  if (!noteWindows.length || !pitchFrames.length) {
+    return { averageOffsetCents: 0, averageAbsOffsetCents: 0, octaveErrorRatio: 0, score: 0 };
+  }
 
   const offsets = [];
+  let octaveErrors = 0;
   for (const frame of pitchFrames) {
     const expected =
       noteWindows.find((note) => frame.time >= note.start && frame.time < note.end) ??
       noteWindows.at(-1);
-    offsets.push(centsBetween(midiToFrequency(expected.midi), frame.frequency));
+    const rawOffset = centsBetween(midiToFrequency(expected.midi), frame.frequency);
+    offsets.push(rawOffset);
+    if (Math.abs(rawOffset) >= 650) octaveErrors += 1;
   }
 
   const centeredOffsets = offsets.map(normalizeCentsToNearestUnison);
   const absoluteOffsets = centeredOffsets.map((offset) => Math.abs(offset));
   const averageAbsOffset = trimmedMean(absoluteOffsets, 0.12);
   const averageOffsetCents = trimmedMean(centeredOffsets, 0.12);
+  const octaveErrorRatio = octaveErrors / offsets.length;
   return {
     averageOffsetCents,
-    score: clamp(100 - averageAbsOffset * 1.35, 0, 100),
+    averageAbsOffsetCents: averageAbsOffset,
+    octaveErrorRatio,
+    score: clamp(100 - averageAbsOffset * 1.35 - octaveErrorRatio * 90, 0, 100),
   };
+}
+
+function buildMeasureSegments({ noteWindows, pitchFrames, rhythmScore, reference }) {
+  const measureNumbers = [...new Set(noteWindows.map((note) => note.measure))];
+  return measureNumbers
+    .map((measure) => {
+      const measureWindows = noteWindows.filter((note) => note.measure === measure);
+      const measureStartTime = measureWindows[0]?.start ?? 0;
+      const measureEndTime = measureWindows.at(-1)?.end ?? measureStartTime;
+      const frames = pitchFrames.filter(
+        (frame) => frame.time >= measureStartTime && frame.time < measureEndTime,
+      );
+      if (frames.length < 2) return null;
+      const pitchProfile = comparePitchFramesToWindows(frames, measureWindows);
+      const pitchScore = pitchProfile.score;
+      const confidence = frames.reduce((sum, frame) => sum + frame.confidence, 0) / frames.length;
+      const issueTypes = classifyIssues(
+        pitchProfile.averageOffsetCents,
+        pitchScore,
+        rhythmScore,
+        pitchProfile,
+      );
+      return buildDiagnosisSegment({
+        measureStart: measure,
+        measureEnd: measure,
+        issueTypes,
+        pitchProfile,
+        pitchScore,
+        rhythmScore,
+        confidence,
+        reference,
+      });
+    })
+    .filter(Boolean);
+}
+
+function buildDiagnosisSegment({
+  measureStart,
+  measureEnd,
+  issueTypes,
+  pitchProfile,
+  pitchScore,
+  rhythmScore,
+  confidence,
+  reference,
+}) {
+  const techniqueTags = techniqueTagsForRange(reference.techniqueMap, measureStart, measureEnd);
+  const learnerMessage = buildLearnerMessage(issueTypes, techniqueTags);
+  const practiceSuggestion = buildPracticeSuggestion(issueTypes, techniqueTags, measureStart, measureEnd);
+  const severity = pitchScore < 70 || rhythmScore < 70 ? "high" : pitchScore < 86 ? "medium" : "low";
+  return {
+    measureStart,
+    measureEnd,
+    issueTypes,
+    severity,
+    confidence: round2(confidence),
+    raw: {
+      pitchOffsetCents: Math.round(pitchProfile.averageOffsetCents),
+    },
+    learnerMessage,
+    practiceSuggestion,
+  };
+}
+
+function prioritizeSegments(segments) {
+  return [...segments].sort((left, right) => {
+    const leftScore = segmentPriority(left);
+    const rightScore = segmentPriority(right);
+    if (rightScore !== leftScore) return rightScore - leftScore;
+    return left.measureStart - right.measureStart;
+  });
+}
+
+function segmentPriority(segment) {
+  if (segment.issueTypes.includes("pitch-octave")) return 4;
+  if (segment.severity === "high") return 3;
+  if (segment.severity === "medium") return 2;
+  if (!segment.issueTypes.includes("stable")) return 1;
+  return 0;
 }
 
 function detectPitch(frame, sampleRate) {
@@ -182,8 +383,9 @@ function estimateRhythmScore(samples, sampleRate, tempo) {
   return clamp(72 + peakRatio * 24, 60, 96);
 }
 
-function classifyIssues(pitchOffsetCents, pitchScore, rhythmScore) {
+function classifyIssues(pitchOffsetCents, pitchScore, rhythmScore, pitchProfile) {
   const issueTypes = [];
+  if (pitchProfile.octaveErrorRatio >= 0.35) issueTypes.push("pitch-octave");
   if (pitchOffsetCents > 28) issueTypes.push("pitch-high");
   if (pitchOffsetCents < -28) issueTypes.push("pitch-low");
   if (rhythmScore < 72) issueTypes.push("rhythm-drag");
@@ -192,6 +394,9 @@ function classifyIssues(pitchOffsetCents, pitchScore, rhythmScore) {
 }
 
 function buildLearnerMessage(issueTypes, techniqueTags) {
+  if (issueTypes.includes("pitch-octave")) {
+    return "这段录音的音区和谱面目标相差接近一个八度，先确认把位和目标音名，再重新录一遍。";
+  }
   if (issueTypes.includes("pitch-high")) {
     return techniqueTags.includes("shifting")
       ? "这一段换把落点偏高，先慢慢找到目标音再加速。"
@@ -209,6 +414,9 @@ function buildLearnerMessage(issueTypes, techniqueTags) {
 }
 
 function buildPracticeSuggestion(issueTypes, techniqueTags, measureStart, measureEnd) {
+  if (issueTypes.includes("pitch-octave")) {
+    return `第 ${measureStart}-${measureEnd} 小节 先只拉每小节第一个目标音，确认音区和八度后，再接回完整乐句。`;
+  }
   const range = `第 ${measureStart}-${measureEnd} 小节`;
   if (issueTypes.includes("pitch-high") || issueTypes.includes("pitch-low")) {
     if (techniqueTags.includes("shifting")) {
@@ -225,6 +433,9 @@ function buildPracticeSuggestion(issueTypes, techniqueTags, measureStart, measur
 function buildCoach(segments, summary) {
   const first = segments[0];
   const topPriorities = [];
+  if (first.issueTypes.includes("pitch-octave")) {
+    topPriorities.push(`先修正音区或错音：${first.learnerMessage}`);
+  }
   if (first.issueTypes.includes("pitch-high") || first.issueTypes.includes("pitch-low")) {
     topPriorities.push(`音准是当前第一优先级：${first.learnerMessage}`);
   }
@@ -243,6 +454,202 @@ function buildCoach(segments, summary) {
         ? "这次的基础音准已经站住了，可以进入更细的音色练习。"
         : "问题集中在清晰的小范围里，适合用短小节反复修正。",
   };
+}
+
+function buildAudioQualityGate({ reference = {}, range, config } = {}) {
+  const gateConfig = resolveGateConfig(config);
+  const fallbackRange = normalizeRange(range) ?? firstMeasuresRange(reference, gateConfig);
+  return {
+    pieceId: reference.id,
+    pieceTitle: reference.title,
+    action: "retry-audio",
+    isBlocking: true,
+    allowedToContinue: false,
+    range: fallbackRange,
+    issueTypes: ["insufficient-audio"],
+    severity: "high",
+    confidence: 0,
+    responseWindow: buildResponseWindow(fallbackRange, gateConfig),
+    learnerMessage: "录音里可用的小提琴单音太少，请靠近麦克风并重新录制。",
+    retryInstruction: `回到第 ${fallbackRange.measureStart}-${fallbackRange.measureEnd} 小节，用中等音量重新拉一遍。`,
+    passThreshold: buildPassThreshold(gateConfig),
+    parentSummary: "这次音频质量不足，系统没有放行继续练习，避免给出不可靠判断。",
+  };
+}
+
+function resolveGateConfig(config = {}) {
+  return {
+    ...DEFAULT_GATE_CONFIG,
+    ...config,
+  };
+}
+
+function buildGateRange({ segment, reference, range, gateConfig }) {
+  const explicitRange = normalizeRange(range);
+  if (explicitRange) return explicitRange;
+  const measureStart = segment.measureStart ?? firstMeasure(reference);
+  const measureEnd = Math.min(
+    segment.measureEnd ?? measureStart,
+    measureStart + gateConfig.responseWindowMeasures - 1,
+  );
+  return { measureStart, measureEnd };
+}
+
+function normalizeRange(range) {
+  if (!range) return null;
+  const measureStart = Number(range.measureStart);
+  const measureEnd = Number(range.measureEnd);
+  if (!Number.isFinite(measureStart) || !Number.isFinite(measureEnd)) return null;
+  return {
+    measureStart: Math.min(measureStart, measureEnd),
+    measureEnd: Math.max(measureStart, measureEnd),
+  };
+}
+
+function firstMeasuresRange(reference, gateConfig) {
+  const measureStart = firstMeasure(reference);
+  return {
+    measureStart,
+    measureEnd: measureStart + gateConfig.responseWindowMeasures - 1,
+  };
+}
+
+function firstMeasure(reference = {}) {
+  return reference.notes?.[0]?.measure ?? 1;
+}
+
+function gateIssueTypesFor(issueTypes = []) {
+  const actionable = issueTypes.filter((issue) => issue !== "stable");
+  return actionable.length ? [...new Set(actionable.map(normalizeGateIssueType))] : [];
+}
+
+function gateIssueTypesWithThresholds(issueTypes, { confidenceTooLow, pitchTooLow, rhythmTooLow }) {
+  if (confidenceTooLow) return ["insufficient-audio"];
+  const expanded = new Set(issueTypes);
+  if (pitchTooLow) expanded.add("pitch");
+  if (rhythmTooLow) expanded.add("rhythm");
+  return [...expanded];
+}
+
+function normalizeGateIssueType(issueType) {
+  if (issueType.startsWith("pitch-")) return "pitch";
+  if (issueType.startsWith("rhythm-")) return "rhythm";
+  return issueType;
+}
+
+function focusRetryInstruction(practiceSuggestion, range) {
+  if (practiceSuggestion) return practiceSuggestion;
+  return `回到第 ${range.measureStart}-${range.measureEnd} 小节，先慢速重练一次。`;
+}
+
+function buildResponseWindow(range, gateConfig) {
+  return {
+    maxMeasuresAfterMistake: gateConfig.responseWindowMeasures,
+    measureStart: range.measureStart,
+    measureEnd: Math.min(
+      range.measureEnd,
+      range.measureStart + gateConfig.responseWindowMeasures - 1,
+    ),
+  };
+}
+
+function buildPassThreshold(gateConfig) {
+  return {
+    minPitchScore: gateConfig.minPitchScore,
+    minRhythmScore: gateConfig.minRhythmScore,
+    minConfidence: gateConfig.minConfidence,
+    pitchToleranceCents: gateConfig.pitchToleranceCents,
+    timingToleranceMs: gateConfig.timingToleranceMs,
+  };
+}
+
+function buildParentSummary(action, issueTypes, range) {
+  if (action === "continue") {
+    return `第 ${range.measureStart}-${range.measureEnd} 小节已经达到当前通过标准，可以进入下一段。`;
+  }
+  if (issueTypes.includes("insufficient-audio")) {
+    return "这次音频质量不足，系统没有放行继续练习，避免给出不可靠判断。";
+  }
+  const labels = [...new Set(issueTypes)].map((issue) => {
+    if (issue === "pitch") return "音准";
+    if (issue === "rhythm") return "节奏";
+    return issue;
+  });
+  return `第 ${range.measureStart}-${range.measureEnd} 小节仍有${labels.join("和")}问题，需要回练后再继续。`;
+}
+
+function repeatedRanges(gates) {
+  const counts = new Map();
+  for (const gate of gates) {
+    const key = rangeKey(gate.range);
+    const existing = counts.get(key) ?? {
+      range: gate.range,
+      count: 0,
+      issueTypes: new Set(),
+    };
+    existing.count += 1;
+    gate.issueTypes.forEach((issue) => existing.issueTypes.add(issue));
+    counts.set(key, existing);
+  }
+  return [...counts.values()]
+    .filter((entry) => entry.count > 1)
+    .map((entry) => ({
+      range: entry.range,
+      count: entry.count,
+      issueTypes: [...entry.issueTypes],
+    }));
+}
+
+function rangesImprovedAfterRetry(gates) {
+  const sawRetry = new Set();
+  const improved = new Map();
+  for (const gate of gates) {
+    const key = rangeKey(gate.range);
+    if (gate.isBlocking) {
+      sawRetry.add(key);
+      continue;
+    }
+    if (gate.allowedToContinue && sawRetry.has(key)) {
+      improved.set(key, {
+        range: gate.range,
+        finalConfidence: gate.confidence,
+      });
+    }
+  }
+  return [...improved.values()];
+}
+
+function rangeKey(range) {
+  return `${range.measureStart}-${range.measureEnd}`;
+}
+
+function buildSessionParentMessage({ status, pieceTitle, retryCount, improvedRanges, currentGate }) {
+  const titlePrefix = pieceTitle ? `${pieceTitle}：` : "";
+  if (status === "ready-to-continue") {
+    const improvedText = improvedRanges.length
+      ? `其中 ${formatRangesForMessage(improvedRanges.map((entry) => entry.range))} 已通过回练改善。`
+      : "当前片段已达到继续标准。";
+    return `${titlePrefix}本次练习完成 ${retryCount} 次纠错回练。${improvedText}`;
+  }
+  return `${titlePrefix}当前仍停在第 ${currentGate.range.measureStart}-${currentGate.range.measureEnd} 小节，需要继续回练后再往后走。`;
+}
+
+function buildSessionTeacherMessage({ repeatedProblemRanges, improvedRanges, currentGate }) {
+  if (repeatedProblemRanges.length) {
+    return `下次课前建议优先检查 ${formatRangesForMessage(
+      repeatedProblemRanges.map((entry) => entry.range),
+    )}；这些片段出现过多次阻断。`;
+  }
+  if (improvedRanges.length) {
+    return `${formatRangesForMessage(improvedRanges.map((entry) => entry.range))} 已通过回练放行，可以从更细的音色和技术要求继续。`;
+  }
+  return currentGate.allowedToContinue
+    ? "当前片段已放行，可以进入下一段练习。"
+    : `当前片段第 ${currentGate.range.measureStart}-${currentGate.range.measureEnd} 小节仍未放行。`;
+}
+
+function formatRangesForMessage(ranges) {
+  return ranges.map((range) => `第 ${range.measureStart}-${range.measureEnd} 小节`).join("、");
 }
 
 function filterNotes(notes, range) {

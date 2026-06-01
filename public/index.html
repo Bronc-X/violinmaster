@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ViolinMaster</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23201914'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='serif' font-size='34' fill='%23c89b4f'%3EV%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -100,70 +101,70 @@
       </symbol>
     </svg>
     <main class="page-shell">
-      <section class="intro-band" aria-label="产品概览">
+      <section class="intro-band" aria-label="产品概览" data-i18n-aria="labels.productOverview">
         <nav class="intro-nav">
           <a class="brand-wordmark" href="#studio" data-action="studio" aria-label="ViolinMaster home">
             <span class="brand-glyph">V</span>
             <span>VIOLINMASTER</span>
           </a>
           <div class="nav-actions">
-            <button type="button" data-action="studio">Studio</button>
-            <button type="button" data-action="library">Library</button>
-            <button type="button" class="nav-primary" data-action="start-practice">Start Practice</button>
+            <button type="button" data-action="studio" data-i18n="actions.studio">琴房</button>
+            <button type="button" data-action="library" data-i18n="actions.library">曲库</button>
+            <button type="button" class="nav-primary" data-action="start-practice" data-i18n="actions.startPractice">开始练习</button>
           </div>
         </nav>
 
         <div class="intro-copy">
           <h1>ViolinMaster</h1>
-          <p>
+          <p data-i18n="messages.hero">
             录音、对谱、定位问题，再把音准与节奏偏差翻译成练琴语言。
           </p>
         </div>
 
-        <div class="feature-tabs" aria-label="核心工作流">
+        <div class="feature-tabs" aria-label="核心工作流" data-i18n-aria="labels.workflow">
           <button class="tab-item" type="button" data-view="full">
-            <span>Full take</span>
+            <span>完整演奏</span>
           </button>
           <button class="tab-item active" type="button" data-view="drill">
-            <span>Target drill</span>
+            <span>小节特训</span>
           </button>
           <button class="tab-item" type="button" data-view="pitch">
-            <span>Pitch map</span>
+            <span>音准图谱</span>
           </button>
           <button class="tab-item" type="button" data-view="rhythm">
-            <span>Rhythm</span>
+            <span>节奏</span>
           </button>
           <button class="tab-item" type="button" data-view="stats">
-            <span>Error stats</span>
+            <span>错误统计</span>
           </button>
           <button class="tab-item" type="button" data-view="coach">
-            <span>AI coach</span>
+            <span>AI 教练</span>
           </button>
         </div>
       </section>
 
-      <section class="workbench-stage" aria-label="ViolinMaster 练习工作台">
+      <section class="workbench-stage" aria-label="ViolinMaster 练习工作台" data-i18n-aria="labels.workbench">
         <div class="varnish-ribbon ribbon-one"></div>
         <div class="varnish-ribbon ribbon-two"></div>
         <div class="app-frame">
-          <aside class="dock" aria-label="主导航">
+          <aside class="dock" aria-label="主导航" data-i18n-aria="labels.mainNav">
             <div class="dock-logo" aria-label="ViolinMaster">
               <svg><use href="#icon-brand"></use></svg>
             </div>
-            <button class="dock-button active" title="练习工作台" aria-label="练习工作台" data-action="workbench">
+            <button class="dock-button active" title="练习工作台" aria-label="练习工作台" data-i18n-title="actions.workbench" data-i18n-aria="actions.workbench" data-action="workbench">
               <svg><use href="#icon-workbench"></use></svg>
             </button>
-            <button class="dock-button" title="曲目库" aria-label="曲目库" data-action="library">
+            <button class="dock-button" title="曲目库" aria-label="曲目库" data-i18n-title="actions.library" data-i18n-aria="actions.library" data-action="library">
               <svg><use href="#icon-library"></use></svg>
             </button>
-            <button class="dock-button" title="错误统计" aria-label="错误统计" data-action="stats">
+            <button class="dock-button" title="错误统计" aria-label="错误统计" data-i18n-title="tabs.stats" data-i18n-aria="tabs.stats" data-action="stats">
               <svg><use href="#icon-stats"></use></svg>
             </button>
-            <button class="dock-button" title="教练" aria-label="教练" data-action="coach">
+            <button class="dock-button" title="教练" aria-label="教练" data-i18n-title="tabs.coach" data-i18n-aria="tabs.coach" data-action="coach">
               <svg><use href="#icon-coach"></use></svg>
             </button>
             <div class="dock-spacer"></div>
-            <button class="dock-button" title="设置" aria-label="设置" data-action="settings">
+            <button class="dock-button" title="设置" aria-label="设置" data-i18n-title="actions.settings" data-i18n-aria="actions.settings" data-action="settings">
               <svg><use href="#icon-settings"></use></svg>
             </button>
           </aside>
@@ -171,27 +172,38 @@
           <section class="studio-surface">
             <header class="topbar">
               <div class="topbar-left">
-                <button class="round-button" type="button" aria-label="返回" data-action="back-top">
+                <button class="round-button" type="button" aria-label="返回" data-i18n-aria="actions.back" data-action="back-top">
                   <svg><use href="#icon-back"></use></svg>
                 </button>
                 <label class="toolbar-pill">
-                  <span>曲目</span>
+                  <span data-i18n="labels.piece">曲目</span>
                   <select id="pieceSelect"></select>
                 </label>
                 <label class="toolbar-pill compact">
-                  <span>模式</span>
+                  <span data-i18n="labels.mode">模式</span>
                   <select id="modeSelect">
-                    <option value="full">Full Take</option>
-                    <option value="drill">Target Drill</option>
+                    <option value="full">完整演奏</option>
+                    <option value="drill">小节特训</option>
+                  </select>
+                </label>
+                <label class="toolbar-pill compact language-pill">
+                  <span data-i18n="labels.language">语言</span>
+                  <select id="languageSelect" aria-label="语言">
+                    <option value="zh">中文</option>
+                    <option value="en">English</option>
                   </select>
                 </label>
               </div>
 
               <div class="topbar-right">
                 <button id="demoButton" class="tool-circle" type="button">Demo</button>
-                <button id="recordButton" class="primary-button" type="button">Record</button>
-                <button id="analyzeButton" class="dark-button" type="button">Analyze</button>
-                <label class="upload-circle" title="上传音频">
+                <label class="tool-circle import-score" title="导入 MusicXML" aria-label="导入 MusicXML" data-i18n-title="actions.importScore" data-i18n-aria="actions.importScore">
+                  <span>XML</span>
+                  <input id="musicXmlInput" type="file" accept=".musicxml,.xml,application/vnd.recordare.musicxml+xml,text/xml,application/xml" />
+                </label>
+                <button id="recordButton" class="primary-button" type="button" data-i18n="actions.record">录音</button>
+                <button id="analyzeButton" class="dark-button" type="button" data-i18n="actions.analyze">分析</button>
+                <label class="upload-circle" title="上传音频" aria-label="上传音频" data-i18n-title="actions.upload" data-i18n-aria="actions.upload">
                   <svg><use href="#icon-upload"></use></svg>
                   <input id="fileInput" type="file" accept="audio/*" />
                 </label>
@@ -200,10 +212,10 @@
 
             <div class="workspace-grid">
               <section class="score-column">
-                <div class="score-document">
+                <div id="fullPanel" class="score-document">
                   <div class="score-head">
                     <div>
-                      <p class="eyebrow">Current Study</p>
+                      <p class="eyebrow" data-i18n="labels.currentStudy">当前曲目</p>
                       <h2 id="pieceTitle">Minuet in G</h2>
                     </div>
                     <div class="score-meta">
@@ -213,25 +225,25 @@
                     </div>
                   </div>
 
-                  <div class="score-paper" aria-label="乐谱分析画布">
+                  <div class="score-paper" aria-label="乐谱分析画布" data-i18n-aria="labels.scoreCanvas">
                     <div id="scoreLines" class="score-lines"></div>
                     <div class="measure-strip" id="measureStrip"></div>
                   </div>
 
                   <div class="document-footer">
                     <div>
-                      <p class="eyebrow">Audio input</p>
+                      <p class="eyebrow" data-i18n="labels.audioInput">音频输入</p>
                       <h3 id="recordingState">准备录音或上传</h3>
                     </div>
                     <audio id="audioPlayer" controls></audio>
                   </div>
                 </div>
 
-                <div class="timeline-panel">
+                <div id="pitchPanel" class="timeline-panel">
                   <div class="panel-title">
                     <div>
-                      <p class="eyebrow">Performance timeline</p>
-                      <h2>音高轮廓与问题标记</h2>
+                      <p class="eyebrow" data-i18n="labels.timeline">演奏时间线</p>
+                      <h2 data-i18n="labels.timelineTitle">音高轮廓与问题标记</h2>
                     </div>
                     <span id="frameCount" class="status-pill muted">0 frames</span>
                   </div>
@@ -239,52 +251,52 @@
                 </div>
               </section>
 
-              <aside class="coach-panel">
+              <aside id="coachPanel" class="coach-panel">
                 <div class="panel-title">
                   <div>
-                    <p class="eyebrow">Coach</p>
-                    <h2>练习诊断</h2>
+                    <p class="eyebrow" data-i18n="labels.coach">教练</p>
+                    <h2 data-i18n="labels.diagnosis">练习诊断</h2>
                   </div>
                   <span id="analysisStatus" class="status-pill muted">Idle</span>
                 </div>
 
                 <div class="metric-grid">
                   <article>
-                    <span>Pitch</span>
+                    <span data-i18n="labels.pitch">音准</span>
                     <strong id="pitchScore">--</strong>
                   </article>
                   <article>
-                    <span>Rhythm</span>
+                    <span data-i18n="labels.rhythm">节奏</span>
                     <strong id="rhythmScore">--</strong>
                   </article>
                   <article>
-                    <span>Stability</span>
+                    <span data-i18n="labels.stability">稳定性</span>
                     <strong id="stabilityScore">--</strong>
                   </article>
                 </div>
 
                 <section class="coach-card featured">
-                  <p class="eyebrow">Top Priority</p>
+                  <p class="eyebrow" data-i18n="labels.topPriority">优先问题</p>
                   <p id="topPriority">完成一次录音后，我会把问题翻译成练琴语言。</p>
                 </section>
 
-                <section class="drill-card">
+                <section id="drillPanel" class="drill-card">
                   <div>
-                    <p class="eyebrow">Target Drill</p>
-                    <h3>指定小节特训</h3>
+                    <p class="eyebrow" data-i18n="labels.targetDrill">目标特训</p>
+                    <h3 data-i18n="labels.targetDrillTitle">指定小节特训</h3>
                   </div>
                   <div class="range-controls">
                     <label>
-                      起始
+                      <span data-i18n="labels.start">起始</span>
                       <input id="measureStart" type="number" min="1" max="16" value="1" />
                     </label>
                     <label>
-                      结束
+                      <span data-i18n="labels.end">结束</span>
                       <input id="measureEnd" type="number" min="1" max="16" value="4" />
                     </label>
                   </div>
-                  <button id="drillButton" class="outline-button" type="button">
-                    Analyze Selected Bars
+                  <button id="drillButton" class="outline-button" type="button" data-i18n="actions.analyzeBars">
+                    分析选中小节
                   </button>
                   <p id="drillHint" class="subtle-copy">
                     AI 会把选定范围作为下一段特训目标。
@@ -292,15 +304,26 @@
                 </section>
 
                 <section class="coach-card">
-                  <p class="eyebrow">Next Drill</p>
+                  <p class="eyebrow" data-i18n="labels.nextDrill">下一段练习</p>
                   <p id="nextDrill">建议先从 2-4 小节的短片段开始。</p>
                 </section>
 
-                <section class="coach-card">
+                <section class="coach-card summary-card">
+                  <p class="eyebrow" data-i18n="labels.parentSummary">家长总结</p>
+                  <p id="parentSummary">完成一次分析后，这里会说明孩子是否通过回练改善。</p>
+                </section>
+
+                <section class="coach-card summary-card">
+                  <p class="eyebrow" data-i18n="labels.teacherSummary">老师总结</p>
+                  <p id="teacherSummary">完成一次分析后，这里会整理下次课前最该看的问题。</p>
+                </section>
+
+                <section id="statsPanel" class="coach-card">
                   <div class="card-title-row">
-                    <p class="eyebrow">Recurring Errors</p>
-                    <button id="clearHistoryButton" class="text-button" type="button">Clear</button>
+                    <p class="eyebrow" data-i18n="labels.recurringErrors">常见错误</p>
+                    <button id="clearHistoryButton" class="text-button" type="button" data-i18n="actions.clear">清空</button>
                   </div>
+                  <p id="historySummary" class="subtle-copy">暂无历史统计</p>
                   <ul id="errorList" class="error-list">
                     <li>暂无历史统计</li>
                   </ul>
@@ -309,13 +332,13 @@
             </div>
           </section>
 
-          <nav class="floating-tools" aria-label="快捷工具">
-            <button title="Metronome" aria-label="Metronome" data-action="metronome"><svg><use href="#icon-metronome"></use></svg></button>
-            <button title="Loop" aria-label="Loop" data-action="loop"><svg><use href="#icon-loop"></use></svg></button>
-            <button title="Measure Range" aria-label="Measure Range" data-action="range"><svg><use href="#icon-range"></use></svg></button>
-            <button title="Comments" aria-label="Comments" data-action="comments"><svg><use href="#icon-comment"></use></svg></button>
-            <button title="Statistics" aria-label="Statistics" data-action="stats"><svg><use href="#icon-stats"></use></svg></button>
-            <button title="Coach" aria-label="Coach" data-action="coach"><svg><use href="#icon-coach"></use></svg></button>
+          <nav class="floating-tools" aria-label="快捷工具" data-i18n-aria="labels.quickTools">
+            <button title="节拍器" aria-label="节拍器" data-i18n-title="actions.metronome" data-i18n-aria="actions.metronome" data-action="metronome"><svg><use href="#icon-metronome"></use></svg></button>
+            <button title="循环" aria-label="循环" data-i18n-title="actions.loop" data-i18n-aria="actions.loop" data-action="loop"><svg><use href="#icon-loop"></use></svg></button>
+            <button title="小节范围" aria-label="小节范围" data-i18n-title="actions.range" data-i18n-aria="actions.range" data-action="range"><svg><use href="#icon-range"></use></svg></button>
+            <button title="批注" aria-label="批注" data-i18n-title="actions.comments" data-i18n-aria="actions.comments" data-action="comments"><svg><use href="#icon-comment"></use></svg></button>
+            <button title="错误统计" aria-label="错误统计" data-i18n-title="tabs.stats" data-i18n-aria="tabs.stats" data-action="stats"><svg><use href="#icon-stats"></use></svg></button>
+            <button title="教练" aria-label="教练" data-i18n-title="tabs.coach" data-i18n-aria="tabs.coach" data-action="coach"><svg><use href="#icon-coach"></use></svg></button>
           </nav>
         </div>
       </section>

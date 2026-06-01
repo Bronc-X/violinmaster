@@ -425,6 +425,14 @@ svg {
   display: none;
 }
 
+.import-score {
+  cursor: pointer;
+}
+
+.import-score input {
+  display: none;
+}
+
 .toolbar-pill {
   display: flex;
   align-items: center;
@@ -439,6 +447,10 @@ svg {
 
 .toolbar-pill.compact {
   max-width: 220px;
+}
+
+.toolbar-pill.language-pill {
+  max-width: 168px;
 }
 
 .toolbar-pill span {
@@ -754,6 +766,10 @@ audio {
   background: linear-gradient(180deg, rgba(185, 120, 47, 0.16), rgba(255, 255, 255, 0.055));
 }
 
+.summary-card {
+  padding-block: 13px;
+}
+
 .coach-card p:last-child,
 .drill-card p:last-child {
   margin-bottom: 0;
@@ -963,6 +979,10 @@ input[type="number"] {
 
   .toolbar-pill,
   .toolbar-pill.compact {
+    max-width: none;
+  }
+
+  .toolbar-pill.language-pill {
     max-width: none;
   }
 

@@ -7,8 +7,14 @@ export const repertoire = [
     levelBand: "beginner",
     category: "suzuki",
     rightsStatus: "import-required",
+    examSystem: "teacher-assigned",
     tempo: 72,
     notes: simpleScaleNotes(1, [69, 69, 76, 76, 78, 78, 76, 74, 74, 73, 73, 71, 71, 69]),
+    assets: {},
+    phraseMap: phraseMap([
+      [1, 2, "Opening response"],
+      [3, 4, "Cadence"],
+    ]),
     techniqueMap: [
       { measureStart: 1, measureEnd: 2, tags: ["intonation", "bowing"] },
       { measureStart: 3, measureEnd: 4, tags: ["rhythm", "fourth-finger"] },
@@ -22,8 +28,14 @@ export const repertoire = [
     levelBand: "beginner-intermediate",
     category: "baroque",
     rightsStatus: "bundled-candidate",
+    examSystem: "national-amateur",
     tempo: 88,
     notes: simpleScaleNotes(1, [74, 79, 81, 83, 84, 79, 74, 76, 77, 79, 81, 77, 74, 72, 71, 72]),
+    assets: { midi: "seed/bach-minuet-g-1.mid" },
+    phraseMap: phraseMap([
+      [1, 2, "Opening sequence"],
+      [3, 4, "Answer phrase"],
+    ]),
     techniqueMap: [
       { measureStart: 1, measureEnd: 2, tags: ["rhythm", "bowing"] },
       { measureStart: 3, measureEnd: 4, tags: ["intonation", "tone"] },
@@ -37,8 +49,14 @@ export const repertoire = [
     levelBand: "intermediate",
     category: "concerto",
     rightsStatus: "bundled-candidate",
+    examSystem: "national-amateur",
     tempo: 96,
     notes: simpleScaleNotes(1, [69, 72, 76, 81, 79, 77, 76, 74, 72, 71, 69, 71, 72, 76, 74, 72]),
+    assets: { midi: "seed/vivaldi-a-minor-m1.mid" },
+    phraseMap: phraseMap([
+      [1, 2, "Opening arpeggio"],
+      [3, 4, "Sequence close"],
+    ]),
     techniqueMap: [
       { measureStart: 1, measureEnd: 2, tags: ["fast-passages", "bowing"] },
       { measureStart: 3, measureEnd: 4, tags: ["rhythm", "intonation"] },
@@ -52,8 +70,14 @@ export const repertoire = [
     levelBand: "intermediate",
     category: "student-concerto",
     rightsStatus: "bundled-candidate",
+    examSystem: "national-amateur",
     tempo: 92,
     notes: simpleScaleNotes(1, [67, 71, 74, 79, 78, 76, 74, 72, 71, 74, 76, 79, 81, 79, 76, 74]),
+    assets: { midi: "seed/seitz-concerto-2.mid" },
+    phraseMap: phraseMap([
+      [1, 2, "Shift setup"],
+      [3, 4, "Resolution"],
+    ]),
     techniqueMap: [
       { measureStart: 1, measureEnd: 2, tags: ["shifting", "intonation"] },
       { measureStart: 3, measureEnd: 4, tags: ["tone", "bowing"] },
@@ -67,8 +91,14 @@ export const repertoire = [
     levelBand: "advanced",
     category: "chinese",
     rightsStatus: "private-dataset",
+    examSystem: "national-professional",
     tempo: 66,
     notes: simpleScaleNotes(1, [74, 76, 79, 81, 79, 76, 74, 72, 74, 76, 79, 84, 83, 81, 79, 76]),
+    assets: {},
+    phraseMap: phraseMap([
+      [1, 2, "Opening theme"],
+      [3, 4, "Expressive ascent"],
+    ]),
     techniqueMap: [
       { measureStart: 1, measureEnd: 2, tags: ["tone", "vibrato"] },
       { measureStart: 3, measureEnd: 4, tags: ["shifting", "intonation"] },
@@ -82,8 +112,14 @@ export const repertoire = [
     levelBand: "advanced",
     category: "chinese",
     rightsStatus: "private-dataset",
+    examSystem: "national-professional",
     tempo: 112,
     notes: simpleScaleNotes(1, [76, 79, 81, 84, 86, 84, 81, 79, 76, 79, 81, 88, 86, 84, 81, 79]),
+    assets: {},
+    phraseMap: phraseMap([
+      [1, 2, "Rhythmic opening"],
+      [3, 4, "High-register answer"],
+    ]),
     techniqueMap: [
       { measureStart: 1, measureEnd: 2, tags: ["fast-passages", "rhythm"] },
       { measureStart: 3, measureEnd: 4, tags: ["shifting", "tone"] },
@@ -101,5 +137,13 @@ function simpleScaleNotes(startMeasure, midiValues) {
     beat: (index % 4) + 1,
     durationBeats: 1,
     midi,
+  }));
+}
+
+function phraseMap(entries) {
+  return entries.map(([measureStart, measureEnd, label]) => ({
+    measureStart,
+    measureEnd,
+    label,
   }));
 }
