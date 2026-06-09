@@ -1,0 +1,145 @@
+- main [ref=e2]:
+  - region "产品概览" [ref=e3]:
+    - navigation [ref=e4]:
+      - link "ViolinMaster home" [ref=e5] [cursor=pointer]:
+        - /url: "#studio"
+        - generic [ref=e6]: V
+        - generic [ref=e7]: VIOLINMASTER
+      - generic [ref=e8]:
+        - button "琴房" [ref=e9] [cursor=pointer]
+        - button "曲库" [ref=e10] [cursor=pointer]
+        - button "开始练习" [ref=e11] [cursor=pointer]
+    - generic [ref=e12]:
+      - heading "ViolinMaster" [level=1] [ref=e13]
+      - paragraph [ref=e14]: 录音、对谱、定位问题，再把音准与节奏偏差翻译成练琴语言。
+    - generic "核心工作流" [ref=e15]:
+      - button "完整演奏" [ref=e16] [cursor=pointer]
+      - button "小节特训" [pressed] [ref=e17] [cursor=pointer]
+      - button "音准图谱" [ref=e18] [cursor=pointer]
+      - button "节奏" [ref=e19] [cursor=pointer]
+      - button "错误统计" [ref=e20] [cursor=pointer]
+      - button "AI 教练" [ref=e21] [cursor=pointer]
+  - region "ViolinMaster 练习工作台" [ref=e22]:
+    - generic [ref=e23]:
+      - complementary "主导航" [ref=e24]:
+        - generic "ViolinMaster" [ref=e25]:
+          - img [ref=e26]
+        - button "练习工作台" [ref=e28] [cursor=pointer]:
+          - img [ref=e29]
+        - button "曲库" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+        - button "错误统计" [ref=e34] [cursor=pointer]:
+          - img [ref=e35]
+        - button "AI 教练" [ref=e37] [cursor=pointer]:
+          - img [ref=e38]
+        - button "设置" [ref=e40] [cursor=pointer]:
+          - img [ref=e41]
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - button "返回" [ref=e46] [cursor=pointer]:
+              - img [ref=e47]
+            - generic [ref=e49]:
+              - generic [ref=e50]: 曲目
+              - combobox "曲目" [ref=e51]:
+                - option "《小星星》变奏曲"
+                - option "G 大调小步舞曲第 1 首" [selected]
+                - option "A 小调协奏曲，第一乐章"
+                - option "学生协奏曲第 2 号"
+                - option "《梁祝》开头主题"
+                - option "《阳光照耀着塔什库尔干》"
+            - generic [ref=e52]:
+              - generic [ref=e53]: 模式
+              - combobox "模式" [ref=e54]:
+                - option "完整演奏" [selected]
+                - option "小节特训"
+            - generic [ref=e55]:
+              - generic [ref=e56]: 语言
+              - combobox "语言" [ref=e57]:
+                - option "中文" [selected]
+                - option "English"
+          - generic [ref=e58]:
+            - button "Demo" [ref=e59] [cursor=pointer]
+            - button "录音" [ref=e60] [cursor=pointer]
+            - button "分析" [ref=e61] [cursor=pointer]
+            - generic "上传音频" [ref=e62]:
+              - img [ref=e63]
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - generic [ref=e69]:
+                  - paragraph [ref=e70]: 当前曲目
+                  - heading "G 大调小步舞曲第 1 首" [level=2] [ref=e71]
+                - generic [ref=e72]:
+                  - generic [ref=e73]: J. S. Bach / Suzuki
+                  - generic [ref=e74]: q = 88
+                  - generic [ref=e75]: 初中级
+              - generic "乐谱分析画布" [ref=e76]:
+                - generic [ref=e111]:
+                  - button "第 1 小节" [pressed] [ref=e112] [cursor=pointer]
+                  - button "第 2 小节" [pressed] [ref=e113] [cursor=pointer]
+                  - button "第 3 小节" [pressed] [ref=e114] [cursor=pointer]
+                  - button "第 4 小节" [pressed] [ref=e115] [cursor=pointer]
+              - generic [ref=e117]:
+                - paragraph [ref=e118]: 音频输入
+                - heading "准备录音或上传" [level=3] [ref=e119]
+            - generic [ref=e121]:
+              - generic [ref=e122]:
+                - paragraph [ref=e123]: 演奏时间线
+                - heading "音高轮廓与问题标记" [level=2] [ref=e124]
+              - generic [ref=e125]: 0 frames
+          - complementary [ref=e127]:
+            - generic [ref=e128]:
+              - generic [ref=e129]:
+                - paragraph [ref=e130]: 教练
+                - heading "练习诊断" [level=2] [ref=e131]
+              - generic [ref=e132]: Idle
+            - generic [ref=e133]:
+              - article [ref=e134]:
+                - generic [ref=e135]: 音准
+                - strong [ref=e136]: "--"
+              - article [ref=e137]:
+                - generic [ref=e138]: 节奏
+                - strong [ref=e139]: "--"
+              - article [ref=e140]:
+                - generic [ref=e141]: 稳定性
+                - strong [ref=e142]: "--"
+            - generic [ref=e143]:
+              - paragraph [ref=e144]: 优先问题
+              - paragraph [ref=e145]: 完成一次录音后，我会把问题翻译成练琴语言。
+            - generic [ref=e146]:
+              - generic [ref=e147]:
+                - paragraph [ref=e148]: 目标特训
+                - heading "指定小节特训" [level=3] [ref=e149]
+              - generic [ref=e150]:
+                - generic [ref=e151]:
+                  - generic [ref=e152]: 起始
+                  - spinbutton "起始" [ref=e153]: "1"
+                - generic [ref=e154]:
+                  - generic [ref=e155]: 结束
+                  - spinbutton "结束" [ref=e156]: "4"
+              - button "分析选中小节" [ref=e157] [cursor=pointer]
+              - paragraph [ref=e158]: AI 会把选定范围作为下一段特训目标。
+            - generic [ref=e159]:
+              - paragraph [ref=e160]: 下一段练习
+              - paragraph [ref=e161]: 建议先从 2-4 小节的短片段开始。
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - paragraph [ref=e164]: 常见错误
+                - button "清空" [ref=e165] [cursor=pointer]
+              - list [ref=e166]:
+                - listitem [ref=e167]: 暂无历史统计
+      - navigation "快捷工具" [ref=e168]:
+        - button "节拍器" [ref=e169] [cursor=pointer]:
+          - img [ref=e170]
+        - button "循环" [ref=e172] [cursor=pointer]:
+          - img [ref=e173]
+        - button "小节范围" [ref=e175] [cursor=pointer]:
+          - img [ref=e176]
+        - button "批注" [ref=e178] [cursor=pointer]:
+          - img [ref=e179]
+        - button "错误统计" [ref=e181] [cursor=pointer]:
+          - img [ref=e182]
+        - button "AI 教练" [ref=e184] [cursor=pointer]:
+          - img [ref=e185]
