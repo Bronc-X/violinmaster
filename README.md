@@ -31,3 +31,12 @@ Suggested checkpoint tag format:
 ```bash
 git tag baseline-2026-05-20-tested
 ```
+
+## Cloud Training Prep
+
+The current repository is an MVP practice workstation, not yet a complete ML
+training repository. Use the AIcloud / Hypersuite startup guide before running
+cloud GPU experiments:
+
+- [AIcloud.WTSHT.CN training startup guide](docs/aicloud-wtsht-training-start.zh-CN.md)
+- [Jupyter bootstrap notebook](notebooks/aicloud_wtsht_bootstrap.ipynb)
